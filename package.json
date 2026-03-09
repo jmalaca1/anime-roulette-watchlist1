@@ -1,5 +1,5 @@
 {
-  "name": "template",
+  "name": "anime-roulette-machine",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,13 +10,14 @@
     "lint": "eslint . --fix",
     "lint:check": "eslint .",
     "format": "prettier --write src/",
-    "format:check": "prettier --check src/"
+    "format:check": "prettier --check src/",
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
+    "@cloudflare/vite-plugin": "^1.26.1",
     "@vueuse/core": "^14.2.1",
     "eslint": "^10.0.0",
-    "eslint-plugin-vue": "github:eslint/js",
+    "eslint-plugin-vue": "^10.0.0",
     "vue": "^3.5.25",
     "vue-router": "^4.6.4",
     "wrangler": "^4.71.0"
