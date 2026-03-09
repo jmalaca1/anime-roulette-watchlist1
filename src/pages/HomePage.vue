@@ -1,4 +1,10 @@
+<script setup>
+import AnimeCard from '@/components/AnimeCard.vue'
 
+const spin = () => {
+  console.log('Hello')
+}
+</script>
 
 <template>
   <main
@@ -28,7 +34,6 @@
               </div>
               <button
                 type="button"
-                :disabled="spinDisabled"
                 class="cursor-pointer rounded-full border border-cyan-300/70 bg-cyan-400/20 px-6 py-3 text-base font-black tracking-wide text-cyan-100 hover:bg-cyan-400/30 disabled:cursor-not-allowed disabled:opacity-60"
                 @click="spin"
               >
