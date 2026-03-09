@@ -16,7 +16,7 @@ export function useAnimeRoulette() {
   const loading = ref(false)
   const error = ref('')
   const spinAttempts = ref(0)
-  
+  const cooldownLeft = ref(0) // Missing from your original code
 
   const watchlist = useLocalStorage(WATCHLIST_KEY, [])
   const spinning = ref(false)
@@ -38,6 +38,23 @@ export function useAnimeRoulette() {
         
         try {
           const response = await fetch(URL)
+          
+          // Check if rate limited
+          if (response.status === 429) {
+            cooldownLeft.value = RETRY_SECONDS
+            error.value = 'Rate limited. Please wait...'
+            
+            // Start cooldown countdown
+            const interval = setInterval(() => {
+              cooldownLeft.value--
+              if (cooldownLeft.value <= 0) {
+                clearInterval(interval)
+              }
+            }, 1000)
+            
+            break
+          }
+          
           const data = await response.json()
           
           if (data && data.data) {
@@ -50,14 +67,15 @@ export function useAnimeRoulette() {
           }
         } catch (fetchErr) {
           console.error('Fetch attempt failed:', fetchErr)
+          error.value = fetchErr.message
         }
         
-        if (!foundAnime && spinAttempts.value < MAX_SAFE_SPIN_ATTEMPTS) {
-          await new Promise(resolve => setTimeout(resolve, RETRY_SECONDS * 1000))
+        if (!foundAnime && spinAttempts.value < MAX_SAFE_SPIN_ATTEMPTS && cooldownLeft.value === 0) {
+          await new Promise(resolve => setTimeout(resolve, 1000))
         }
       }
       
-      if (!foundAnime) {
+      if (!foundAnime && cooldownLeft.value === 0) {
         error.value = 'Could not find suitable anime after multiple attempts'
       }
       
@@ -95,6 +113,7 @@ export function useAnimeRoulette() {
     spinning,
     isLoading,
     spinAttempts,
+    cooldownLeft, // Added this
     spin,
     addToWatchlist,
     removeFromWatchlist,
